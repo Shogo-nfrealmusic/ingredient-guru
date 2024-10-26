@@ -1,9 +1,33 @@
 import OpenAI from 'openai';
+import { customsearch_v1 } from '@googleapis/customsearch';
 
 const openaiInstance = new OpenAI({
   apiKey: "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",
   dangerouslyAllowBrowser: true
 });
+
+const customSearch = new customsearch_v1.Customsearch({});
+const GOOGLE_API_KEY = 'AIzaSyDrwudY9_89Pz7tfbu5n0FXH2lph4c0GyM';
+const SEARCH_ENGINE_ID = '017576662512468239146:omuauf_lfve'; // You need to create this in Google Custom Search Console
+
+const getRecipeImage = async (recipeName: string, ingredients: string[]) => {
+  try {
+    const searchQuery = `${recipeName} recipe with ${ingredients[0]}`;
+    const response = await customSearch.cse.list({
+      auth: GOOGLE_API_KEY,
+      cx: SEARCH_ENGINE_ID,
+      q: searchQuery,
+      searchType: 'image',
+      num: 1,
+      safe: 'high'
+    });
+
+    return response.data.items?.[0]?.link || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836';
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836';
+  }
+};
 
 export const analyzeRecipe = async (recipe: string) => {
   try {
@@ -93,11 +117,15 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
     const content = response.choices[0]?.message?.content || "[]";
     const recipes = JSON.parse(content);
     
-    // Assign relevant images based on ingredients
-    return recipes.map((recipe: any) => ({
-      ...recipe,
-      imageUrl: findRelevantImage(recipe.ingredients)
-    }));
+    // Fetch images for each recipe
+    const recipesWithImages = await Promise.all(
+      recipes.map(async (recipe: any) => ({
+        ...recipe,
+        imageUrl: await getRecipeImage(recipe.title, recipe.ingredients)
+      }))
+    );
+
+    return recipesWithImages;
   } catch (error) {
     console.error('Error suggesting recipes:', error);
     throw error;
