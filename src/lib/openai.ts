@@ -29,16 +29,16 @@ export const analyzeRecipe = async (recipe: string) => {
 };
 
 const RECIPE_IMAGES = [
-  'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
-  'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
-  'https://images.unsplash.com/photo-1518770660439-4636190af475',
-  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
-  'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
-  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
-  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e',
-  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
-  'https://images.unsplash.com/photo-1531297484001-80022131f5a1',
-  'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7'
+  'https://images.unsplash.com/photo-1482049016688-2d3e1b311543', // Food plating
+  'https://images.unsplash.com/photo-1504674900247-0877df9cc836', // Varied dishes
+  'https://images.unsplash.com/photo-1498837167922-ddd27525d352', // Healthy food
+  'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0', // Breakfast
+  'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327', // Noodles
+  'https://images.unsplash.com/photo-1473093295043-cdd812d0e601', // Pasta
+  'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd', // Eggs
+  'https://images.unsplash.com/photo-1495521821757-a1efb6729352', // Salad
+  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c', // Healthy bowl
+  'https://images.unsplash.com/photo-1467003909585-2f8a72700288'  // Fruits
 ];
 
 export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
