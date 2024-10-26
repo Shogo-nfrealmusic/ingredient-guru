@@ -28,18 +28,30 @@ export const analyzeRecipe = async (recipe: string) => {
   }
 };
 
-const RECIPE_IMAGES = [
-  'https://images.unsplash.com/photo-1482049016688-2d3e1b311543', // Food plating
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836', // Varied dishes
-  'https://images.unsplash.com/photo-1498837167922-ddd27525d352', // Healthy food
-  'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0', // Breakfast
-  'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327', // Noodles
-  'https://images.unsplash.com/photo-1473093295043-cdd812d0e601', // Pasta
-  'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd', // Eggs
-  'https://images.unsplash.com/photo-1495521821757-a1efb6729352', // Salad
-  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c', // Healthy bowl
-  'https://images.unsplash.com/photo-1467003909585-2f8a72700288'  // Fruits
-];
+const RECIPE_IMAGES = {
+  eggs: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd',
+  pasta: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601',
+  noodles: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327',
+  salad: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352',
+  fruits: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288',
+  breakfast: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0',
+  default: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836'
+};
+
+const findRelevantImage = (ingredients: string[]) => {
+  const lowerIngredients = ingredients.map(i => i.toLowerCase());
+  
+  // Check for specific ingredients
+  for (const ingredient of lowerIngredients) {
+    if (ingredient.includes('egg')) return RECIPE_IMAGES.eggs;
+    if (ingredient.includes('pasta') || ingredient.includes('spaghetti')) return RECIPE_IMAGES.pasta;
+    if (ingredient.includes('noodle')) return RECIPE_IMAGES.noodles;
+    if (ingredient.includes('lettuce') || ingredient.includes('salad')) return RECIPE_IMAGES.salad;
+    if (ingredient.includes('fruit') || ingredient.includes('apple') || ingredient.includes('banana')) return RECIPE_IMAGES.fruits;
+  }
+  
+  return RECIPE_IMAGES.default;
+};
 
 export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
   try {
@@ -81,10 +93,10 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
     const content = response.choices[0]?.message?.content || "[]";
     const recipes = JSON.parse(content);
     
-    // Assign random images from our curated list to each recipe
+    // Assign relevant images based on ingredients
     return recipes.map((recipe: any) => ({
       ...recipe,
-      imageUrl: RECIPE_IMAGES[Math.floor(Math.random() * RECIPE_IMAGES.length)]
+      imageUrl: findRelevantImage(recipe.ingredients)
     }));
   } catch (error) {
     console.error('Error suggesting recipes:', error);
