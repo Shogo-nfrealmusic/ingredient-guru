@@ -28,6 +28,19 @@ export const analyzeRecipe = async (recipe: string) => {
   }
 };
 
+const RECIPE_IMAGES = [
+  'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
+  'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475',
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
+  'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
+  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e',
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
+  'https://images.unsplash.com/photo-1531297484001-80022131f5a1',
+  'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7'
+];
+
 export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
   try {
     const prompt = `I have the following ingredients: ${ingredients.join(', ')}.
@@ -48,7 +61,7 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
       "servings": number,
       "ingredients": ["ingredient1", "ingredient2", ...],
       "steps": ["step1", "step2", ...],
-      "imageUrl": "https://images.unsplash.com/photo-placeholder"
+      "imageUrl": null
     }`;
 
     const response = await openaiInstance.chat.completions.create({
@@ -66,7 +79,13 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
     });
 
     const content = response.choices[0]?.message?.content || "[]";
-    return JSON.parse(content);
+    const recipes = JSON.parse(content);
+    
+    // Assign random images from our curated list to each recipe
+    return recipes.map((recipe: any) => ({
+      ...recipe,
+      imageUrl: RECIPE_IMAGES[Math.floor(Math.random() * RECIPE_IMAGES.length)]
+    }));
   } catch (error) {
     console.error('Error suggesting recipes:', error);
     throw error;

@@ -17,8 +17,7 @@ export const suggestRecipes = async (ingredients: string[]): Promise<Recipe[]> =
     const suggestions = await suggestRecipesFromIngredients(ingredients);
     return suggestions.map((recipe: Recipe, index: number) => ({
       ...recipe,
-      id: String(index + 1),
-      imageUrl: recipe.imageUrl || "https://images.unsplash.com/photo-1512058564366-18510be2db19"
+      id: String(index + 1)
     }));
   } catch (error) {
     console.error('Error suggesting recipes:', error);
