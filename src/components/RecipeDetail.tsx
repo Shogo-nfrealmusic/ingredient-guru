@@ -70,36 +70,7 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, isOpen, onClose }) 
               <Clock size={16} className="text-sage-500" />
               <span>Cook: {recipe.cookTime} mins</span>
             </div>
-            {recipe.servings && (
-              <div className="flex items-center gap-1">
-                <span>Serves: {recipe.servings}</span>
-              </div>
-            )}
           </div>
-
-          {recipe.nutritionalInfo && (
-            <div className="bg-sage-50 p-4 rounded-lg">
-              <h3 className="font-display text-lg mb-2">Nutritional Information (per serving)</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Calories</p>
-                  <p className="font-medium">{recipe.nutritionalInfo.calories} kcal</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Protein</p>
-                  <p className="font-medium">{recipe.nutritionalInfo.protein}g</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Carbs</p>
-                  <p className="font-medium">{recipe.nutritionalInfo.carbs}g</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Fat</p>
-                  <p className="font-medium">{recipe.nutritionalInfo.fat}g</p>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div>
             <h3 className="font-display text-lg mb-2">Ingredients</h3>

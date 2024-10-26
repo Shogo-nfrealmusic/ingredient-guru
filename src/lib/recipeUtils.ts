@@ -1,3 +1,5 @@
+import { suggestRecipesFromIngredients } from './openai';
+
 export interface Recipe {
   id: string;
   title: string;
@@ -8,12 +10,6 @@ export interface Recipe {
   steps: string[];
   imageUrl: string;
   servings?: number;
-  nutritionalInfo?: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
 }
 
 export const suggestRecipes = async (ingredients: string[]): Promise<Recipe[]> => {
