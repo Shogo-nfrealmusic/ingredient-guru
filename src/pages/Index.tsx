@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import IngredientInput from '@/components/IngredientInput';
 import RecipeCard from '@/components/RecipeCard';
 import RecipeDetail from '@/components/RecipeDetail';
-import ApiKeyInput from '@/components/ApiKeyInput';
 import { suggestRecipes, type Recipe } from '@/lib/recipeUtils';
 
 const Index = () => {
@@ -25,8 +24,6 @@ const Index = () => {
             Enter your available ingredients and discover delicious recipes you can make right now.
           </p>
         </div>
-
-        <ApiKeyInput />
 
         <div className="max-w-2xl mx-auto">
           <IngredientInput onIngredientsChange={handleIngredientsChange} />

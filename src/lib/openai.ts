@@ -1,26 +1,13 @@
 import OpenAI from 'openai';
 
-let openaiInstance: OpenAI | null = null;
-
-export const initializeOpenAI = (apiKey: string) => {
-  openaiInstance = new OpenAI({
-    apiKey: apiKey,
-    dangerouslyAllowBrowser: true
-  });
-};
-
-export const getOpenAIInstance = () => {
-  if (!openaiInstance) {
-    throw new Error('OpenAI not initialized. Please set your API key first.');
-  }
-  return openaiInstance;
-};
+const openaiInstance = new OpenAI({
+  apiKey: "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",
+  dangerouslyAllowBrowser: true
+});
 
 export const analyzeRecipe = async (recipe: string) => {
-  const openai = getOpenAIInstance();
-  
   try {
-    const response = await openai.chat.completions.create({
+    const response = await openaiInstance.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
