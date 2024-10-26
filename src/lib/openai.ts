@@ -47,10 +47,11 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
     Please suggest three unique recipes I can make using these ingredients. 
     Each recipe should include:
     - A short description
-    - A list of ingredients required
+    - A list of ingredients required with quantities
     - Step-by-step cooking instructions
     - Estimated preparation and cooking time
     - Suggested serving size
+    - Nutritional information per serving (calories, protein, carbs, fat)
 
     Format the response as a JSON array with the following structure for each recipe:
     {
@@ -61,7 +62,13 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
       "servings": number,
       "ingredients": ["ingredient1", "ingredient2", ...],
       "steps": ["step1", "step2", ...],
-      "imageUrl": null
+      "imageUrl": null,
+      "nutritionalInfo": {
+        "calories": number,
+        "protein": number (in grams),
+        "carbs": number (in grams),
+        "fat": number (in grams)
+      }
     }`;
 
     const response = await openaiInstance.chat.completions.create({
@@ -69,7 +76,7 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
       messages: [
         {
           role: "system",
-          content: "You are a professional chef who creates recipes based on available ingredients. Always respond with valid JSON."
+          content: "You are a professional chef and nutritionist who creates recipes based on available ingredients. Always respond with valid JSON including accurate nutritional information."
         },
         {
           role: "user",
@@ -81,7 +88,6 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
     const content = response.choices[0]?.message?.content || "[]";
     const recipes = JSON.parse(content);
     
-    // Assign random images from our curated list to each recipe
     return recipes.map((recipe: any) => ({
       ...recipe,
       imageUrl: RECIPE_IMAGES[Math.floor(Math.random() * RECIPE_IMAGES.length)]
