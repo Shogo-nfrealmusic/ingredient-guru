@@ -5,28 +5,6 @@ const openaiInstance = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 
-const GOOGLE_API_KEY = 'AIzaSyDrwudY9_89Pz7tfbu5n0FXH2lph4c0GyM';
-const SEARCH_ENGINE_ID = '017576662512468239146:omuauf_lfve';
-
-const getRecipeImage = async (recipeName: string, ingredients: string[]) => {
-  try {
-    const searchQuery = `${recipeName} recipe with ${ingredients[0]}`;
-    const response = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}&searchType=image&num=1&safe=high`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch image');
-    }
-
-    const data = await response.json();
-    return data.items?.[0]?.link || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836';
-  } catch (error) {
-    console.error('Error fetching image:', error);
-    return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836';
-  }
-};
-
 export const analyzeRecipe = async (recipe: string) => {
   try {
     const response = await openaiInstance.chat.completions.create({
@@ -69,8 +47,7 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
       "cookTime": number (in minutes),
       "servings": number,
       "ingredients": ["ingredient1", "ingredient2", ...],
-      "steps": ["step1", "step2", ...],
-      "imageUrl": null
+      "steps": ["step1", "step2", ...]
     }`;
 
     const response = await openaiInstance.chat.completions.create({
@@ -88,17 +65,7 @@ export const suggestRecipesFromIngredients = async (ingredients: string[]) => {
     });
 
     const content = response.choices[0]?.message?.content || "[]";
-    const recipes = JSON.parse(content);
-    
-    // Fetch images for each recipe
-    const recipesWithImages = await Promise.all(
-      recipes.map(async (recipe: any) => ({
-        ...recipe,
-        imageUrl: await getRecipeImage(recipe.title, recipe.ingredients)
-      }))
-    );
-
-    return recipesWithImages;
+    return JSON.parse(content);
   } catch (error) {
     console.error('Error suggesting recipes:', error);
     throw error;

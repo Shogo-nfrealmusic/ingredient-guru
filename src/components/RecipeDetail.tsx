@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, X } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { type Recipe } from '@/lib/recipeUtils';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -53,14 +53,6 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, isOpen, onClose }) 
         </DialogHeader>
         
         <div className="space-y-6">
-          <div className="aspect-video overflow-hidden rounded-lg">
-            <img
-              src={recipe.imageUrl}
-              alt={recipe.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Clock size={16} className="text-sage-500" />
