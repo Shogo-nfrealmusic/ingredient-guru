@@ -52,6 +52,25 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sage: {
+          50: "#f4f7f4",
+          100: "#e6ebe6",
+          200: "#cdd8cd",
+          300: "#a7bba7",
+          400: "#809780",
+          500: "#5f755f",
+          600: "#4c5e4c",
+          700: "#3f4d3f",
+        },
+        terracotta: {
+          50: "#fdf4f4",
+          100: "#fde8e8",
+          200: "#fbd5d5",
+          300: "#f8b4b4",
+          400: "#f98080",
+          500: "#f05252",
+          600: "#e02424",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -71,6 +90,10 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      fontFamily: {
+        display: ["Playfair Display", "serif"],
+        sans: ["Inter", "sans-serif"],
       },
     },
   },
