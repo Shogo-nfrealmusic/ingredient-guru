@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Clock, X } from 'lucide-react';
 import { type Recipe } from '@/lib/recipeUtils';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { analyzeRecipe } from '@/lib/openai';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +18,33 @@ interface RecipeDetailProps {
 }
 
 const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, isOpen, onClose }) => {
+  const [analysis, setAnalysis] = useState<string>('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { toast } = useToast();
+
+  const handleAnalyze = async () => {
+    setIsAnalyzing(true);
+    try {
+      const recipeText = `
+        Recipe: ${recipe.title}
+        Description: ${recipe.description}
+        Ingredients: ${recipe.ingredients.join(', ')}
+        Steps: ${recipe.steps.join(' ')}
+      `;
+      
+      const result = await analyzeRecipe(recipeText);
+      setAnalysis(result);
+    } catch (error) {
+      toast({
+        title: "Analysis Failed",
+        description: "Please make sure you've set your OpenAI API key.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -58,6 +88,23 @@ const RecipeDetail: React.FC<RecipeDetailProps> = ({ recipe, isOpen, onClose }) 
                 <li key={index} className="text-muted-foreground">{step}</li>
               ))}
             </ol>
+          </div>
+
+          <div className="space-y-4">
+            <Button 
+              onClick={handleAnalyze} 
+              disabled={isAnalyzing}
+              className="w-full"
+            >
+              {isAnalyzing ? "Analyzing..." : "Get AI Analysis"}
+            </Button>
+            
+            {analysis && (
+              <div className="p-4 bg-muted rounded-lg">
+                <h3 className="font-display text-lg mb-2">AI Analysis</h3>
+                <p className="text-muted-foreground">{analysis}</p>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
