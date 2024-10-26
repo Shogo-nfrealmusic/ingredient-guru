@@ -3,14 +3,41 @@ import IngredientInput from '@/components/IngredientInput';
 import RecipeCard from '@/components/RecipeCard';
 import RecipeDetail from '@/components/RecipeDetail';
 import { suggestRecipes, type Recipe } from '@/lib/recipeUtils';
+import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleIngredientsChange = (ingredients: string[]) => {
-    const suggestedRecipes = suggestRecipes(ingredients);
-    setRecipes(suggestedRecipes);
+  const handleIngredientsChange = async (ingredients: string[]) => {
+    if (ingredients.length === 0) {
+      setRecipes([]);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const suggestedRecipes = await suggestRecipes(ingredients);
+      setRecipes(suggestedRecipes);
+      if (suggestedRecipes.length === 0) {
+        toast({
+          title: "No recipes found",
+          description: "Try adding different ingredients",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to suggest recipes. Please try again.",
+        variant: "destructive",
+      });
+      setRecipes([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -29,7 +56,11 @@ const Index = () => {
           <IngredientInput onIngredientsChange={handleIngredientsChange} />
         </div>
 
-        {recipes.length > 0 ? (
+        {isLoading ? (
+          <div className="text-center text-muted-foreground py-12">
+            Finding recipes for you...
+          </div>
+        ) : recipes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recipes.map((recipe) => (
               <RecipeCard
