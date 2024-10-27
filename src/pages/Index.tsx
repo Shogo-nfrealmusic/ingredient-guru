@@ -3,6 +3,7 @@ import IngredientInput from '@/components/IngredientInput';
 import RecipeCard from '@/components/RecipeCard';
 import RecipeDetail from '@/components/RecipeDetail';
 import { useToast } from '@/components/ui/use-toast';
+import { suggestRecipesFromIngredients } from '@/lib/openai';
 
 const Index = () => {
   const [recipes, setRecipes] = useState([]);
@@ -18,7 +19,7 @@ const Index = () => {
 
     setIsLoading(true);
     try {
-      const suggestedRecipes = await fetchRecipes(ingredients);
+      const suggestedRecipes = await suggestRecipesFromIngredients(ingredients);
       setRecipes(suggestedRecipes);
       if (suggestedRecipes.length === 0) {
         toast({
@@ -28,6 +29,7 @@ const Index = () => {
         });
       }
     } catch (error) {
+      console.error('Error fetching recipes:', error);
       toast({
         title: "Error",
         description: "Failed to suggest recipes. Please try again.",
@@ -37,23 +39,6 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const fetchRecipes = async (ingredients: string[]) => {
-    const response = await fetch('/api/openai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ingredients }), // ingredients をそのまま送信
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch recipes');
-    }
-
-    const data = await response.json();
-    return data; // レシピを返す
   };
 
   return (
