@@ -1,18 +1,20 @@
 import OpenAI from 'openai';
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-
+// OpenAIのインスタンスを作成
 const openaiInstance = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
+/**
+ * レシピを分析する関数
+ * @param {string} recipe - 分析対象のレシピ
+ * @returns {Promise<string>} - 分析結果
+ */
 export const analyzeRecipe = async (recipe) => {
   try {
     const response = await openaiInstance.chat.completions.create({
-      model: "gpt-4-turbo", // Updated to use gpt-4-turbo
+      model: "gpt-4-turbo",
       messages: [
         {
           role: "system",
@@ -28,10 +30,15 @@ export const analyzeRecipe = async (recipe) => {
     return response.choices[0]?.message?.content || "No analysis available";
   } catch (error) {
     console.error('Error analyzing recipe:', error);
-    throw error;
+    throw new Error('Failed to analyze recipe');
   }
 };
 
+/**
+ * 食材からレシピを提案する関数
+ * @param {string[]} ingredients - 利用可能な食材の配列
+ * @returns {Promise<object[]>} - 提案されたレシピの配列
+ */
 export const suggestRecipesFromIngredients = async (ingredients) => {
   try {
     const prompt = `I have the following ingredients: ${ingredients.join(', ')}.
@@ -51,13 +58,13 @@ export const suggestRecipesFromIngredients = async (ingredients) => {
       - Carbohydrate content (in grams).
       - Fat content (in grams).
 
-    Format the response as a JSON array with the following structure for each recipe:
+    Format the response strictly as a JSON array with the following structure for each recipe:
     {
       "title": "Recipe Title",
       "description": "Short description highlighting flavor",
-      "prepTime": number (in minutes),
-      "cookTime": number (in minutes),
-      "totalTime": number (in minutes),
+      "prepTime": number,
+      "cookTime": number,
+      "totalTime": number,
       "servings": number,
       "ingredients": ["ingredient1", "ingredient2", ...],
       "steps": ["step1", "step2", ...],
@@ -69,9 +76,8 @@ export const suggestRecipesFromIngredients = async (ingredients) => {
       }
     }`;
 
-
     const response = await openaiInstance.chat.completions.create({
-      model: "gpt-4-turbo", // Updated to use gpt-4-turbo
+      model: "gpt-4-turbo",
       messages: [
         {
           role: "system",
@@ -86,7 +92,7 @@ export const suggestRecipesFromIngredients = async (ingredients) => {
 
     const content = response.choices[0]?.message?.content || "[]";
 
-    // Attempt to parse the JSON and handle any errors gracefully
+    // JSONのパースを試みる
     try {
       const recipes = JSON.parse(content);
       return recipes;
@@ -97,6 +103,6 @@ export const suggestRecipesFromIngredients = async (ingredients) => {
     }
   } catch (error) {
     console.error('Error suggesting recipes:', error);
-    throw error;
+    throw new Error('Failed to suggest recipes');
   }
 };
