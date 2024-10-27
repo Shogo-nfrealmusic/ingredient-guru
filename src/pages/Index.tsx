@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import IngredientInput from '@/components/IngredientInput';
 import RecipeCard from '@/components/RecipeCard';
 import RecipeDetail from '@/components/RecipeDetail';
-import { suggestRecipes, type Recipe } from '@/lib/recipeUtils';
 import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [recipes, setRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -19,7 +18,7 @@ const Index = () => {
 
     setIsLoading(true);
     try {
-      const suggestedRecipes = await suggestRecipes(ingredients);
+      const suggestedRecipes = await fetchRecipes(ingredients);
       setRecipes(suggestedRecipes);
       if (suggestedRecipes.length === 0) {
         toast({
@@ -38,6 +37,23 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchRecipes = async (ingredients: string[]) => {
+    const response = await fetch('/api/openai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ingredients }), // ingredients をそのまま送信
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch recipes');
+    }
+
+    const data = await response.json();
+    return data; // レシピを返す
   };
 
   return (
